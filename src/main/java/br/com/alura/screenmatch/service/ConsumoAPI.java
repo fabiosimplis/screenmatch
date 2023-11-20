@@ -8,6 +8,7 @@ import java.net.http.HttpResponse;
 
 public class ConsumoAPI {
     public String obterDados(String endereco) {
+
         HttpClient client = HttpClient.newHttpClient();
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(endereco))
