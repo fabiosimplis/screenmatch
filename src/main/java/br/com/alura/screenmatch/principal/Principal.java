@@ -28,33 +28,47 @@ public class Principal {
         System.out.println("Dados Temporada\n" + dados);
 
         List<DadosTemporada> temporadas = getDadosTemporadas(dados, nomeSerie);
-        System.out.println("\n -TEMPORADAS- \n");
-        temporadas.forEach(System.out::println);
-
-        System.out.println(" -Episodios- ");
-        temporadas.forEach( t -> t.episodios().forEach(e -> System.out.println(e.titulo())) );
-
-        System.out.println("\nTop 5 episódios");
-        List<DadosEpisodio> dadosEpisodios = getDadosEpisodios(temporadas);
-        printQuantidadeDeEpisodios(dadosEpisodios, 5);
-
-        System.out.println("\n -EPISODIOS- \n");
+//        System.out.println("\n -TEMPORADAS- \n");
+//        temporadas.forEach(System.out::println);
+//
+//        System.out.println(" -Episodios- ");
+//        temporadas.forEach( t -> t.episodios().forEach(e -> System.out.println(e.titulo())) );
+//
+//        System.out.println("\nTop 5 episódios");
+//        List<DadosEpisodio> dadosEpisodios = getDadosEpisodios(temporadas);
+//        printQuantidadeDeEpisodios(dadosEpisodios, 5);
+//
+//        System.out.println("\n -EPISODIOS- \n");
         List<Episodio> episodios = getEpisodios(temporadas);
-        episodios.forEach(System.out::println);
 
-        System.out.println("Qual o título do episódio deseja");
-        buscaEpisodio(episodios);
+//        episodios.forEach(System.out::println);
+//        buscaEpisodio(episodios);
 
 //
-        System.out.println("Busca a partir da data");
 
-        buscaApatirData(episodios);
+        //buscaApatirData(episodios);
 
+        avaliacoesPorTemporada(episodios);
 
     }
 
+    private void avaliacoesPorTemporada(List<Episodio> episodios){
+
+        System.out.println("\n - AVALIAÇÃO POR TEMPORADA - \n");
+
+        Map<Integer, Double> avaliacaoPorTemporada = episodios.stream()
+                                                        .filter( ep -> ep.getAvaliacao() > 0.0)
+                                                        .collect(Collectors.groupingBy(Episodio::getTemporada,
+                                                                Collectors.averagingDouble(Episodio::getAvaliacao)));
+
+        System.out.println(avaliacaoPorTemporada);
+
+    }
 
     private void buscaApatirData(List<Episodio> episodios) {
+
+        System.out.println("\n - BUSCA EPISÓDIOS A PARTIR DE UMA DATA -\n");
+
         System.out.println("A partir de que ano deseja ver os episódios");
         var ano = leitura.nextInt();
         leitura.nextLine();
@@ -73,6 +87,7 @@ public class Principal {
     }
 
     private void buscaEpisodio(List<Episodio> episodios) {
+        System.out.println("Qual o título do episódio deseja");
         var trechoTitulo = leitura.nextLine();
 
         Optional<Episodio> episodioBuscando = episodios.stream()
