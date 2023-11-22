@@ -28,28 +28,52 @@ public class Principal {
         System.out.println("Dados Temporada\n" + dados);
 
         List<DadosTemporada> temporadas = getDadosTemporadas(dados, nomeSerie);
-//        System.out.println("\n -TEMPORADAS- \n");
-//        temporadas.forEach(System.out::println);
-//
-//        System.out.println(" -Episodios- ");
-//        temporadas.forEach( t -> t.episodios().forEach(e -> System.out.println(e.titulo())) );
-//
-//        System.out.println("\nTop 5 episódios");
-//        List<DadosEpisodio> dadosEpisodios = getDadosEpisodios(temporadas);
-//        printQuantidadeDeEpisodios(dadosEpisodios, 5);
-//
-//        System.out.println("\n -EPISODIOS- \n");
+        System.out.println("\n -TEMPORADAS- \n");
+        temporadas.forEach(System.out::println);
+
+        System.out.println(" -Episodios- ");
+        temporadas.forEach( t -> t.episodios().forEach(e -> System.out.println(e.titulo())) );
+
+        System.out.println("\nTop 5 episódios");
+        List<DadosEpisodio> dadosEpisodios = getDadosEpisodios(temporadas);
+        printQuantidadeDeEpisodios(dadosEpisodios, 5);
+
+        System.out.println("\n -EPISODIOS- \n");
         List<Episodio> episodios = getEpisodios(temporadas);
 
-//        episodios.forEach(System.out::println);
-//        buscaEpisodio(episodios);
+        episodios.forEach(System.out::println);
+        buscaEpisodio(episodios);
 
-//
 
-        //buscaApatirData(episodios);
+
+        buscaApatirData(episodios);
 
         avaliacoesPorTemporada(episodios);
 
+
+        DoubleSummaryStatistics est = estatisticasDeAvaliacoes(episodios);
+
+        System.out.println(est);
+
+        imprimiEstatisticas(est);
+
+    }
+
+    private DoubleSummaryStatistics estatisticasDeAvaliacoes(List<Episodio> episodios){
+
+        System.out.println("\n - ESTATISTICAS - \n");
+
+        return episodios.stream()
+                .filter( ep -> ep.getAvaliacao() > 0.0)
+                .collect(Collectors.summarizingDouble(Episodio::getAvaliacao));
+    }
+
+    private void imprimiEstatisticas(DoubleSummaryStatistics est){
+        System.out.println("\n - IMPRIMI ESTATISTICAS- \n");
+        System.out.println("Média das Notas Por Episódios: " + est.getAverage());
+        System.out.println("Melhor nota de episódio: " + est.getMax());
+        System.out.println("Pior nota de episódio: " + est.getMin());
+        System.out.println("Quantidade de episódios: " + est.getCount());
     }
 
     private void avaliacoesPorTemporada(List<Episodio> episodios){
