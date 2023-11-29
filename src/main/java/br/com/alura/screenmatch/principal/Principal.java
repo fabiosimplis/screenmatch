@@ -19,44 +19,56 @@ public class Principal {
     private ConverteDados conversor = new ConverteDados();
     private final String ENDERECO = "https://www.omdbapi.com/?t=";
     private final String API_KEY = "&apikey=529b3feb";
+    
+    private List<DadosSerie> dadosSeries = new ArrayList<>();
 
     public void exibeMenu(){
-        System.out.println("Digite o nome da série para busca");
-        var nomeSerie = leitura.nextLine();
 
-        var dados = getDadosdaSerie(nomeSerie);
-        System.out.println("Dados Temporada\n" + dados);
+        var opcao = -1;
 
-        List<DadosTemporada> temporadas = getDadosTemporadas(dados, nomeSerie);
-        System.out.println("\n -TEMPORADAS- \n");
-        temporadas.forEach(System.out::println);
+        while(opcao != 0){
+            var menu = """
+                    1 - Buscar Séries
+                    2 - Buscar Episódios
+                    3 - Listar Séries Listadas
+                    
+                    0 - Sair
+                    
+                    Digite a opção desejada:
+                    """;
 
-        System.out.println(" -Episodios- ");
-        temporadas.forEach( t -> t.episodios().forEach(e -> System.out.println(e.titulo())) );
+            System.out.println(menu);
+            opcao = leitura.nextInt();
+            leitura.nextLine();
 
-        System.out.println("\nTop 5 episódios");
-        List<DadosEpisodio> dadosEpisodios = getDadosEpisodios(temporadas);
-        printQuantidadeDeEpisodios(dadosEpisodios, 5);
+            switch (opcao){
+                case 1:
+                    buscarSerieWeb();
+                    break;
+                case 2:
+                    buscarEpisodioPorSerie();
+                    break;
+                case 3:
+                    listarSeriesBuscadas();
+                    break;
+                case 0:
+                    System.out.println("Saindo ...");
+                    break;
+                default:
+                    System.out.println("Opção inválida");
+            }
+        }
 
-        System.out.println("\n -EPISODIOS- \n");
-        List<Episodio> episodios = getEpisodios(temporadas);
+    }
 
-        episodios.forEach(System.out::println);
-        buscaEpisodio(episodios);
+    private void listarSeriesBuscadas() {
+        dadosSeries.forEach(System.out::println);
+    }
 
-
-
-        buscaApatirData(episodios);
-
-        avaliacoesPorTemporada(episodios);
-
-
-        DoubleSummaryStatistics est = estatisticasDeAvaliacoes(episodios);
-
-        System.out.println(est);
-
-        imprimiEstatisticas(est);
-
+    private void buscarSerieWeb() {
+        DadosSerie dados = getDadosSerie();
+        dadosSeries.add(dados);
+        System.out.println(dados);
     }
 
     private DoubleSummaryStatistics estatisticasDeAvaliacoes(List<Episodio> episodios){
@@ -155,21 +167,23 @@ public class Principal {
         return dadosEpisodios;
     }
 
-    private List<DadosTemporada> getDadosTemporadas(DadosSerie dados, String nomeSerie) {
-
+    private void buscarEpisodioPorSerie() {
+        DadosSerie dadosSerie = getDadosSerie();
         List<DadosTemporada> temporadas = new ArrayList<>();
-        String json;
-        for (int i = 1; i <= dados.totalTemporadas(); i++){
-            json = consumo.obterDados(ENDERECO + nomeSerie.replace(" ", "+") + "&season=" + i + API_KEY);
+
+
+        for (int i = 1; i <= dadosSerie.totalTemporadas(); i++){
+            var json = consumo.obterDados(ENDERECO + dadosSerie.titulo().replace(" ", "+") + "&season=" + i + API_KEY);
             var dadosTemporada = conversor.obterDados(json, DadosTemporada.class);
             temporadas.add(dadosTemporada);
         }
 
-        return temporadas;
+        temporadas.forEach(System.out::println);
     }
 
-    private DadosSerie getDadosdaSerie(String nomeSerie) {
-
+    private DadosSerie getDadosSerie() {
+        System.out.println("Digite o nome da série para busca");
+        var nomeSerie = leitura.nextLine();
         var json = consumo.obterDados(ENDERECO + nomeSerie.replace(" ", "+") + API_KEY);
         DadosSerie dados = conversor.obterDados(json, DadosSerie.class);
 
