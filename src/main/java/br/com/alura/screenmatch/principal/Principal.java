@@ -1,6 +1,7 @@
 package br.com.alura.screenmatch.principal;
 
 import br.com.alura.screenmatch.model.*;
+import br.com.alura.screenmatch.repository.SerieRepository;
 import br.com.alura.screenmatch.service.ConsumoAPI;
 import br.com.alura.screenmatch.service.ConverteDados;
 
@@ -18,6 +19,11 @@ public class Principal {
     private final String API_KEY = "&apikey=529b3feb";
     
     private List<DadosSerie> dadosSeries = new ArrayList<>();
+    private SerieRepository repositorio;
+
+    public Principal(SerieRepository repositorio){
+        this.repositorio = repositorio;
+    }
 
     public void exibeMenu(){
 
@@ -72,10 +78,37 @@ public class Principal {
     private void buscarSerieWeb() {
         DadosSerie dados = getDadosSerie();
 
-        if (dados.titulo() != null)
-                dadosSeries.add(dados);
+        if (dados.titulo() == null){
+            System.out.println("Serie não encontrada!!!\n");
+            return;
+        }
+        Serie serie = new Serie(dados);
+        dadosSeries.add(dados);
+        repositorio.save(serie);
 
         System.out.println(dados);
+    }
+    private void buscarEpisodioPorSerie() {
+        DadosSerie dadosSerie = getDadosSerie();
+        List<DadosTemporada> temporadas = new ArrayList<>();
+
+
+        for (int i = 1; i <= dadosSerie.totalTemporadas(); i++){
+            var json = consumo.obterDados(ENDERECO + dadosSerie.titulo().replace(" ", "+") + "&season=" + i + API_KEY);
+            var dadosTemporada = conversor.obterDados(json, DadosTemporada.class);
+            temporadas.add(dadosTemporada);
+        }
+
+        temporadas.forEach(System.out::println);
+    }
+
+    private DadosSerie getDadosSerie() {
+        System.out.println("Digite o nome da série para busca");
+        var nomeSerie = leitura.nextLine();
+        var json = consumo.obterDados(ENDERECO + nomeSerie.replace(" ", "+") + API_KEY);
+        DadosSerie dados = conversor.obterDados(json, DadosSerie.class);
+
+        return dados;
     }
 
     private DoubleSummaryStatistics estatisticasDeAvaliacoes(List<Episodio> episodios){
@@ -173,29 +206,5 @@ public class Principal {
         //.toList(); // Lista imutável, não podendo adionar dados
         return dadosEpisodios;
     }
-
-    private void buscarEpisodioPorSerie() {
-        DadosSerie dadosSerie = getDadosSerie();
-        List<DadosTemporada> temporadas = new ArrayList<>();
-
-
-        for (int i = 1; i <= dadosSerie.totalTemporadas(); i++){
-            var json = consumo.obterDados(ENDERECO + dadosSerie.titulo().replace(" ", "+") + "&season=" + i + API_KEY);
-            var dadosTemporada = conversor.obterDados(json, DadosTemporada.class);
-            temporadas.add(dadosTemporada);
-        }
-
-        temporadas.forEach(System.out::println);
-    }
-
-    private DadosSerie getDadosSerie() {
-        System.out.println("Digite o nome da série para busca");
-        var nomeSerie = leitura.nextLine();
-        var json = consumo.obterDados(ENDERECO + nomeSerie.replace(" ", "+") + API_KEY);
-        DadosSerie dados = conversor.obterDados(json, DadosSerie.class);
-
-        return dados;
-    }
-
 
 }
