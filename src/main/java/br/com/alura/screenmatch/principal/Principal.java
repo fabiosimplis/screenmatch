@@ -31,6 +31,7 @@ public class Principal {
 
         while(opcao != 0){
             var menu = """
+                    \n
                     1 - Buscar Séries
                     2 - Buscar Episódios
                     3 - Listar Séries Listadas
@@ -65,9 +66,9 @@ public class Principal {
     }
 
     private void listarSeriesBuscadas() {
-        List<Serie> series = new ArrayList<>();
-
-        series = dadosSeries.stream().map(dadosSerie -> new Serie(dadosSerie)).collect(Collectors.toList());
+        //List<Serie> series = new ArrayList<>();
+        //series = dadosSeries.stream().map(dadosSerie -> new Serie(dadosSerie)).collect(Collectors.toList());
+        List<Serie> series = repositorio.findAll();
         series.stream()
                 .sorted(Comparator.comparing(Serie::getGenero))
                 .forEach(System.out::println);
