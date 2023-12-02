@@ -38,6 +38,7 @@ public class Principal {
                     4 - Buscar Série por Título
                     5 - Buscar Série por Ator
                     6 - Buscar Top 5 Séries
+                    7 - Buscar Série por Categoria
                     
                     0 - Sair
                     
@@ -66,6 +67,9 @@ public class Principal {
                     break;
                 case 6:
                     buscarTop5Series();
+                    break;
+                case 7:
+                    buscarSeriesPorCategoria();
                     break;
                 case 0:
                     System.out.println("Saindo ...");
@@ -164,6 +168,17 @@ public class Principal {
         List<Serie> top5Series = repositorio.findTop5ByOrderByAvaliacaoDesc();
 
         top5Series.forEach( s -> System.out.println(s.getTitulo() + ", Avaliação: " + s.getAvaliacao()));
+    }
+    private void buscarSeriesPorCategoria(){
+        System.out.println("Qual categoria deseja busca?");
+        var nomeCategoria = leitura.nextLine();
+        Categoria categoria = Categoria.fromStringPtBR(nomeCategoria);
+
+        List<Serie> seriesPorCategoria = repositorio.findByGenero(categoria);
+
+        System.out.println("\nSéries da categoria " + categoria.name());
+
+        seriesPorCategoria.forEach( s -> System.out.println(s.getTitulo() + ", categoria = " + s.getGenero()));
     }
 
     private DadosSerie getDadosSerie() {
