@@ -40,6 +40,7 @@ public class Principal {
                     6 - Buscar Top 5 Séries
                     7 - Buscar Série por Categoria
                     8 - Buscar Série por Número máximo de Temporadas
+                    9 - Buscar Episódio por trecho
                     
                     0 - Sair
                     
@@ -74,6 +75,9 @@ public class Principal {
                     break;
                 case 8:
                     buscaSeriesPorNumeroTemporadasEAvaliacao();
+                    break;
+                case 9:
+                    buscaEpisodioPorTrecho();
                     break;
                 case 0:
                     System.out.println("Saindo ...");
@@ -119,6 +123,7 @@ public class Principal {
                 var json = consumo.obterDados(ENDERECO + serieEncontrada.getTitulo().replace(" ", "+") + "&season=" + i + API_KEY);
                 var dadosTemporada = conversor.obterDados(json, DadosTemporada.class);
                 temporadas.add(dadosTemporada);
+
             }
             temporadas.forEach(System.out::println);
 
@@ -194,6 +199,15 @@ public class Principal {
         //List<Serie> seriesBuscadas = repositorio.findByTotalTemporadasLessThanEqualAndAvaliacaoGreaterThanEqual(numeroTemporadas, avaliacao);
         List<Serie> seriesBuscadas = repositorio.seriesPorTemporadaEAvaliacao(numeroTemporadas, avaliacao);
         seriesBuscadas.forEach(s -> System.out.println(s.getTitulo() + ", quantidade de temporadas = " + s.getTotalTemporadas() + ", e possui avaliação = " + s.getAvaliacao()));
+    }
+
+    private void buscaEpisodioPorTrecho(){
+        System.out.println("Qual episódio deseja buscar?");
+        var episodioBuscar = leitura.nextLine();
+        List<Episodio> episodiosEncontrados = repositorio.episodioPorTrecho(episodioBuscar);
+        episodiosEncontrados.forEach( e ->
+                System.out.printf("Série: %s Temporada %d - Episódio %d - %s\n",
+                        e.getSerie().getTitulo(), e.getTemporada(), e.getNumero(), e.getTitulo()));
     }
 
     private DadosSerie getDadosSerie() {
