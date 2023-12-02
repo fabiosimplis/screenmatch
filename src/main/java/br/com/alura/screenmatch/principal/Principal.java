@@ -39,6 +39,7 @@ public class Principal {
                     5 - Buscar Série por Ator
                     6 - Buscar Top 5 Séries
                     7 - Buscar Série por Categoria
+                    8 - Buscar Série por Número máximo de Temporadas
                     
                     0 - Sair
                     
@@ -70,6 +71,9 @@ public class Principal {
                     break;
                 case 7:
                     buscarSeriesPorCategoria();
+                    break;
+                case 8:
+                    buscaSeriesPorNumeroTemporadasEAvaliacao();
                     break;
                 case 0:
                     System.out.println("Saindo ...");
@@ -181,6 +185,16 @@ public class Principal {
         seriesPorCategoria.forEach( s -> System.out.println(s.getTitulo() + ", categoria = " + s.getGenero()));
     }
 
+    private void buscaSeriesPorNumeroTemporadasEAvaliacao(){
+        System.out.println("Qual número máximo de temporadas deseja que a séria tenha?");
+        var numeroTemporadas = leitura.nextInt();
+        System.out.println("Avaliação a partir de qual valor?");
+        var avaliacao = leitura.nextDouble();
+
+        List<Serie> seriesBuscadas = repositorio.findByTotalTemporadasLessThanEqualAndAvaliacaoGreaterThanEqual(numeroTemporadas, avaliacao);
+        seriesBuscadas.forEach(s -> System.out.println(s.getTitulo() + ", quantidade de temporadas = " + s.getTotalTemporadas() + ", e possui avaliação = " + s.getAvaliacao()));
+    }
+
     private DadosSerie getDadosSerie() {
         System.out.println("Digite o nome da série para busca");
         var nomeSerie = leitura.nextLine();
@@ -189,6 +203,7 @@ public class Principal {
 
         return dados;
     }
+
 
     private DoubleSummaryStatistics estatisticasDeAvaliacoes(List<Episodio> episodios){
 
