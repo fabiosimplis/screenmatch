@@ -26,7 +26,7 @@ public class SerieService {
 
 
     public List<SerieDTO> obterLancamentos() {
-        return converteDados(repository.findTop5ByOrderByAvaliacaoDesc());
+        return converteDados(repository.lancamentosMaisRecentes());
     }
 
     public SerieDTO obterPorId(Long id) {
@@ -39,16 +39,6 @@ public class SerieService {
 
     private List<SerieDTO> converteDados(List<Serie> series){
         return series.stream()
-                /*.map( serie -> new SerieDTO(
-                        serie.getId(),
-                        serie.getTitulo(),
-                        serie.getTotalTemporadas(),
-                        serie.getAvaliacao(),
-                        serie.getGenero(),
-                        serie.getAtores(),
-                        serie.getPoster(),
-                        serie.getSinopse()
-                ))*/
                 .map(SerieDTO::new)
                 .toList();
     }
