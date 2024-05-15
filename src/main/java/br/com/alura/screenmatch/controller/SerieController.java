@@ -4,7 +4,10 @@ import br.com.alura.screenmatch.dto.EpisodioDTO;
 import br.com.alura.screenmatch.dto.SerieDTO;
 import br.com.alura.screenmatch.service.SerieService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
@@ -48,5 +51,10 @@ public class SerieController {
         List<EpisodioDTO> episodioDTOS = service.obterTemporada(id, numeroTemporada);
         System.out.println(episodioDTOS);
         return episodioDTOS;
+    }
+
+    @GetMapping("/categoria/{genero}")
+    public List<SerieDTO> obterSeriesPorCategoria(@PathVariable String genero){
+        return service.obterSeriesPorCategoria(genero);
     }
 }
