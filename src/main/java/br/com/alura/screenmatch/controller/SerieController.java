@@ -32,11 +32,21 @@ public class SerieController {
 
     @GetMapping("/{id}")
     public SerieDTO obtemSeriePorId(@PathVariable Long id){
+
         return service.obterPorId(id);
     }
 
     @GetMapping("/{id}/temporadas/todas")
-    public List<EpisodioDTO> obterTodasTemporadas(@PathVariable long id){
+    public List<EpisodioDTO> obterTodasTemporadas(@PathVariable Long id){
         return service.obterTodasTemporadas(id);
+    }
+
+    @GetMapping("/{id}/temporadas/{numeroTemporada}")
+    public List<EpisodioDTO> obterTodasTemporadas(@PathVariable Long id,
+                                                  @PathVariable Integer numeroTemporada){
+        System.out.println("id = " + id + " temporada " + numeroTemporada);
+        List<EpisodioDTO> episodioDTOS = service.obterTemporada(id, numeroTemporada);
+        System.out.println(episodioDTOS);
+        return episodioDTOS;
     }
 }
